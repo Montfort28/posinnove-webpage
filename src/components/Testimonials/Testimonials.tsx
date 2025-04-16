@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import React, { useState, useEffect,} from 'react';
 
 function TestimonialCard({
     quote,
@@ -65,18 +64,6 @@ function TestimonialCard({
       
     ];
   
-    const [activeIndex, setActiveIndex] = useState(0);
-    
-    // Optional: Auto-scroll testimonials
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setActiveIndex((prevIndex) => 
-          prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
-        );
-      }, 8000);
-      
-      return () => clearInterval(interval);
-    }, [testimonials.length]);
   
     return (
       <section id="testimonials" className="py-16 px-4 md:px-8 bg-white">
@@ -99,24 +86,6 @@ function TestimonialCard({
                 image={testimonial.image}
               />
             ))}
-          </div>
-          
-          {/* Mobile view carousel indicators */}
-          <div className="md:hidden flex justify-center mt-8">
-            <div className="flex space-x-3">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveIndex(index)}
-                  className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
-                    index === activeIndex 
-                      ? 'bg-blue-600 scale-110' 
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                  aria-label={`Testimonial ${index + 1}`}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </section>
