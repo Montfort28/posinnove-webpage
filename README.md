@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Posinnove Educational Institutions Page
 
-## Getting Started
+This is a responsive, modern webpage built with Next.js, TypeScript, and Tailwind CSS. 
+It was developed based on a Figma design provided by the Posinnove team and is intended 
+to be part of their main platform site. The purpose of this project is to showcase 
+partnerships with educational institutions and invite others to collaborate.
 
-First, run the development server:
+Project Objectives
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Develop a webpage that integrates smoothly into Posinnove’s main platform.
+- Implement the layout based on the official Figma design.
+- Create a clean, professional UI that is responsive and accessible.
+- Gain real-world development experience by building a production-ready page.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Technologies Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js (App Router + TypeScript)
+- Tailwind CSS
+- Framer Motion (for animations and transitions)
+- Vercel (for deployment)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Key Features
 
-## Learn More
+- Institution Highlights – Logos and stories from academic collaborators.
+- Visual Examples – Mockups, data, and metrics from successful projects.
+- Call to Action – Buttons and links inviting institutions to join.
+- Responsive Design – Works across all devices (desktop, tablet, mobile).
+- Component-Based Structure – All sections split into individual reusable components.
+- Scroll Navigation – Smooth section-to-section navigation using ID-based scrolling.
+- Auto-Sliding Carousel – Project cards that cycle automatically with swipe support.
+- Animated Transitions – Section fades and button interactions for a polished feel.
 
-To learn more about Next.js, take a look at the following resources:
+Folder Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+src/
+  ├── components/
+  │   ├── Hero/
+  │   ├── Partners/
+  │   ├── Testimonials/
+  │   ├── ...
+  └── app/
+      └── page.tsx
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Setup Instructions
 
-## Deploy on Vercel
+1. Clone the repository:
+   git clone https://github.com/Montfort28/posinnove-webpage.git
+   cd posinnove-webpage
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Install dependencies:
+   npm install
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Run the development server:
+   npm run dev
+
+4. Open http://localhost:3000 in your browser.
+
+Live Demo
+Deployed project is available at: https://posinnove-webpage.vercel.app
+
+Final Deliverables
+
+- Fully responsive, production-ready webpage
+- Clean code with reusable components
+- Live deployment on Vercel
+- This README with clear instructions
+
+Final Notes
+
+This project was developed as a standalone, production-ready webpage that follows the design and layout conventions of the official Posinnove platform. It is structured modularly so it can be easily integrated into the main Posinnove website as a new section or route. All animations, layout adjustments, and performance optimizations were tested thoroughly on both desktop and mobile environments. For navigational realism, external links such as Blogs and About Us point to the live Posinnove site (https://www.posinnove.com) to simulate actual user flow.
+
+Screenshots
+Homepage (Desktop View)
+![Homepage](./public/screenshots/home-desktop.png)
+Projects Carousel
+![Carousel](./public/screenshots/projects-carousel.png)
+Mobile View
+![Mobile View](./public/screenshots/mobile-view.png)
+![ navbar-mobile](./public/screenshots/navbar-mobile.png)
