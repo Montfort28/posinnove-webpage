@@ -1,43 +1,83 @@
 "use client";
-import Image from "next/image";
+import { ImageErrorBoundary } from "@/components/ui/image-error-boundary";
+import { useImageOptimization } from "@/hooks/useImageOptimization";
+import { FadeContainer, FadeSection } from "@/components/ui/fade-section";
+import { motion } from "framer-motion";
+import { ANIMATION_CONFIG } from "@/utils/constants";
 
-export default function partners() {
-    const partners = [
-        { name: "ICT Chamber", logo: "/images/Partner1.png" },
-        { name: "ALX Ventures", logo: "/images/images.png" },
-        { name: "Umurava", logo: "/images/umurava.png" },
-        { name: "University of Rwanda", logo: "/images/urlogo.png" }
-      ];
-    
-      return (
-        <section id="partners" className="py-12 px-4 md:px-8 bg-gray-50">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-10">
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                Your students will work on projects for our recognitions
-              </h2>
-              <p className="text-gray-600 text-lg">
-                Hundreds of companies have partnered with Posinnove (50+)
-              </p>
-            </div>
-            
-            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-              {partners.map((partner, index) => (
-                <div
-                key={index}
-                className="w-32 h-20 bg-white shadow-sm rounded-lg flex items-center justify-center p-4 transition-all duration-300 hover:shadow-blue-100 hover:shadow-lg hover:scale-110 hover:border hover:border-blue-500"
-              >          
-                  <Image 
-                    src={partner.logo} 
-                    alt={`${partner.name} logo`} 
-                    width={120}
-                    height={60}
-                    className="object-contain"
-                  />
-                </div>
-              ))}
-            </div>
+interface PartnerLogoProps {
+  src: string;
+  alt: string;
+  index: number;
+}
+
+function PartnerLogo({ src, alt, index }: PartnerLogoProps) {
+  const { imageProps } = useImageOptimization({
+    src,
+    width: 160,
+    quality: 85,
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ 
+        ...ANIMATION_CONFIG,
+        delay: index * 0.1 
+      }}
+      className="relative w-32 h-20 md:w-40 md:h-24 grayscale hover:grayscale-0 transition-all duration-300"
+    >
+      <ImageErrorBoundary
+        {...imageProps}
+        height={imageProps.width * 0.75}
+        alt={alt}
+        className="object-contain w-full h-full filter transition-all duration-300"
+      />
+    </motion.div>
+  );
+}
+
+export default function Partners() {
+  const partners = [
+    { src: "/images/urlogo.webp", alt: "University of Rwanda" },
+    { src: "/images/Partner1.png", alt: "Partner 1" },
+    { src: "/images/umurava.png", alt: "Umurava" },
+    { src: "/images/images.png", alt: "images" },
+  ];
+
+  return (
+    <section id="partners" className="py-12 px-4 md:px-8 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        <FadeSection direction="up" className="text-center mb-10">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Trusted by Leading Institutions
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Join the growing network of educational institutions transforming their approach to experiential learning.
+          </p>
+        </FadeSection>
+
+        <FadeContainer>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 items-center justify-items-center">
+            {partners.map((partner, index) => (
+              <PartnerLogo
+                key={partner.alt}
+                src={partner.src}
+                alt={partner.alt}
+                index={index}
+              />
+            ))}
           </div>
-        </section>
-      );
-    }
+        </FadeContainer>
+
+        <FadeSection direction="up" delay={0.4} className="text-center mt-12">
+          <p className="text-sm text-gray-500">
+            And many more institutions across Africa
+          </p>
+        </FadeSection>
+      </div>
+    </section>
+  );
+}

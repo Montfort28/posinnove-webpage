@@ -4,8 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { BookOpenIcon, ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useImageOptimization } from "@/hooks/useImageOptimization";
+import { ANIMATION_CONFIG } from "@/utils/constants";
 
 export default function Hero() {
+  const { imageProps } = useImageOptimization({
+    src: '/images/Hero2.jpg',
+    width: 800,
+    quality: 90,
+    priority: true // Priority load for above-the-fold hero image
+  });
+
   return (
     <section
       className="relative overflow-hidden"
@@ -22,7 +31,7 @@ export default function Hero() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+            transition={{ duration: ANIMATION_CONFIG.duration, ease: ANIMATION_CONFIG.ease }}
             className="w-full md:w-1/2 mb-8 md:mb-0 pr-0 md:pr-12"
           >
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
@@ -49,17 +58,19 @@ export default function Hero() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+            transition={{ duration: ANIMATION_CONFIG.duration, ease: ANIMATION_CONFIG.ease }}
             className="w-full md:w-1/2"
           >
             <div className="relative rounded-2xl overflow-hidden h-64 md:h-96 bg-gray-200 shadow-xl">
               <Image
-                src="/images/Hero2.jpg"
                 alt="Students working on laptop"
-                width={800}
-                height={600}
+                src={imageProps.src}
+                width={imageProps.width}
+                height={imageProps.width * 0.75} // Add height prop with 4:3 aspect ratio
                 className="object-cover"
-                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority={true}
+                quality={imageProps.quality}
               />
             </div>
           </motion.div>

@@ -1,58 +1,86 @@
 "use client";
-
+import { useGlobalState } from "@/contexts/GlobalStateContext";
+import { useResponsive } from "@/hooks/useResponsive";
+import { useImageOptimization } from "@/hooks/useImageOptimization";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
-import React, { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button"; // Fixed component import path
+import React, { useEffect, useState } from "react";
 
-function ProjectCard({
-  title,
-  category,
-  image
-}: {
+interface ProjectCardProps {
   title: string;
   category: string;
   image: string;
-}) {
+}
+
+function ProjectCard({ title, category, image }: ProjectCardProps) {
+  const { imageProps } = useImageOptimization({
+    src: image,
+    width: 400,
+    quality: 85
+  });
+
+  // Use client-side only animation with useEffect
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all hover:translate-y-1">
+    <motion.div 
+      layout
+      initial={mounted ? { opacity: 0, y: 20 } : "none"}
+      animate={mounted ? { opacity: 1, y: 0 } : "none"}
+      exit={mounted ? { opacity: 0, y: -20 } : "none"}
+      className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all hover:translate-y-1"
+    >
       <div className="w-full h-48 bg-gray-200 relative">
         <Image
-          src={image}
+          src={imageProps.src}
+          width={imageProps.width}
+          height={imageProps.width * 0.75}
+          quality={imageProps.quality}
+          priority={imageProps.priority}
+          sizes={imageProps.sizes}
           alt={`${category} project`}
-          width={400}
-          height={200}
           className="object-cover w-full h-full"
+          loading="lazy"
         />
         <div className="absolute top-3 right-3 bg-blue-600 text-white text-xs py-1 px-3 rounded-full font-medium">
           {category}
         </div>
       </div>
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 ">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
         <div className="flex justify-center mt-4">
-          <Link
-            href="#project-details"
-            onClick={(e) => {
-              e.preventDefault();
-              document
-                .getElementById("posinnove-action")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            <Button variant="primary" size="sm" icon={<ArrowRightIcon size={16} />}>
-              View All
+          <Link href="#project-details">
+            <Button 
+              variant="primary" 
+              size="sm"
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
+              View All <ArrowRightIcon className="ml-2" size={16} />
             </Button>
           </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default function ProjectCards() {
+  const { state, dispatch } = useGlobalState();
+  const { isBelow } = useResponsive();
+  const isMobile = isBelow('md');
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const allProjects = [
     {
       id: 1,
@@ -92,103 +120,70 @@ export default function ProjectCards() {
     }
   ];
 
-  const [isMobile, setIsMobile] = useState(false);
   const projectsPerSlide = isMobile ? 1 : 3;
   const totalSlides = Math.ceil(allProjects.length / projectsPerSlide);
-  const [activeSlide, setActiveSlide] = useState(0);
-  const directionRef = useRef(1);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    if (!mounted) return;
+    
+    const interval = setInterval(() => {
+      dispatch({ 
+        type: 'SET_ACTIVE_PROJECT_SLIDE', 
+        index: (state.activeProjectSlide + 1) % totalSlides 
+      });
+    }, 5000);
 
-  useEffect(() => {
-    const startAutoSlide = () => {
-      intervalRef.current = setInterval(() => {
-        directionRef.current = 1;
-        setActiveSlide((prev) => (prev + 1) % totalSlides);
-      }, 8000);
-    };
-
-    startAutoSlide();
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [totalSlides]);
-
-  const handleDragEnd = (offsetX: number) => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (offsetX < -100 && activeSlide < totalSlides - 1) {
-      directionRef.current = 1;
-      setActiveSlide((prev) => prev + 1);
-    } else if (offsetX > 100 && activeSlide > 0) {
-      directionRef.current = -1;
-      setActiveSlide((prev) => prev - 1);
-    }
-    setTimeout(() => {
-      intervalRef.current = setInterval(() => {
-        directionRef.current = 1;
-        setActiveSlide((prev) => (prev + 1) % totalSlides);
-      }, 8000);
-    }, 3000);
-  };
+    return () => clearInterval(interval);
+  }, [state.activeProjectSlide, totalSlides, dispatch, mounted]);
 
   const currentProjects = allProjects.slice(
-    activeSlide * projectsPerSlide,
-    activeSlide * projectsPerSlide + projectsPerSlide
+    state.activeProjectSlide * projectsPerSlide,
+    state.activeProjectSlide * projectsPerSlide + projectsPerSlide
   );
 
   return (
     <section id="projects" className="py-16 px-4 md:px-8 bg-gray-50 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold text-center text-gray-900 mb-12">
-          See Projects That You Can Assign to Your Students
-        </h2>
+        <motion.div
+          initial={mounted ? { opacity: 0, y: 20 } : "none"}
+          whileInView={mounted ? { opacity: 1, y: 0 } : "none"}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-2xl font-bold text-center text-gray-900 mb-12">
+            See Projects That You Can Assign to Your Students
+          </h2>
+        </motion.div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeSlide}
-            initial={{ x: directionRef.current * 1000, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: directionRef.current * -1000, opacity: 0 }}
-            transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            onDragEnd={(e, { offset }) => handleDragEnd(offset.x)}
-          >
-            {currentProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                title={project.title}
-                category={project.category}
-                image={project.image}
-              />
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {mounted && (
+            <AnimatePresence mode="wait">
+              {currentProjects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  title={project.title}
+                  category={project.category}
+                  image={project.image}
+                />
+              ))}
+            </AnimatePresence>
+          )}
+        </div>
 
         <div className="flex justify-center mt-8">
           <div className="flex space-x-3">
-            {[...Array(totalSlides)].map((_, index) => (
+            {[...Array(totalSlides)].map((_, i) => (
               <button
-                key={index}
+                key={i}
                 onClick={() => {
-                  directionRef.current = index > activeSlide ? 1 : -1;
-                  setActiveSlide(index);
+                  dispatch({ type: 'SET_ACTIVE_PROJECT_SLIDE', index: i });
                 }}
                 className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
-                  index === activeSlide
+                  i === state.activeProjectSlide
                     ? "bg-blue-600 scale-110"
                     : "bg-gray-300 hover:bg-gray-400"
                 }`}
-                aria-label={`Slide ${index + 1}`}
+                aria-label={`Slide ${i + 1}`}
               />
             ))}
           </div>

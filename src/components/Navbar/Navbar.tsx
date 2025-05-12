@@ -40,8 +40,8 @@ export default function Navbar({
                 <Image 
                   src="/images/Logo2.png" 
                   alt="LOGO" 
-                  width={400}
-                  height={400}
+                  width={40}
+                  height={40}
                   className="object-cover"
                   priority
                 />

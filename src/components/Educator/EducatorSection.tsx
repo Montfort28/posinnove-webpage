@@ -1,5 +1,5 @@
 "use client";
-import { BookOpenIcon, ChartBarIcon, BriefcaseIcon, UsersIcon} from "lucide-react";
+import { BookOpenIcon, BarChart2, BriefcaseIcon, UsersIcon} from "lucide-react";
 function FeatureCard({
   icon,
   title,
@@ -28,7 +28,7 @@ export default function EducatorSection() {
           description: "Educators enroll courses, departments or even entire universities to connect students with real-world projects."
         },
         {
-          icon: <ChartBarIcon size={24} />,
+          icon: <BarChart2 size={24} />,
           title: "Explore",
           description: "Educators can browse projects categorized by industry, skills, or duration to find matches for curriculum requirements."
         },
