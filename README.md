@@ -17,7 +17,7 @@ Technologies Used
 - Next.js (App Router + TypeScript)
 - Tailwind CSS
 - Framer Motion (for animations and transitions)
-- Vercel (for deployment)
+- Vercel ( deployment)
 
 Key Features
 
